@@ -1,6 +1,6 @@
 {
   "name": "finapp-server",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Finance App Server",
   "main": "dist/src/index.js",
   "type": "module",
