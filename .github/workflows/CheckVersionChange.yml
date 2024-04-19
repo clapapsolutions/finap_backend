@@ -1,0 +1,48 @@
+name: Check Version Change
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  check_version_change:
+    concurrency:
+      group: production
+      cancel-in-progress: true
+
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.version-check.outputs.version-changed }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: Compare versions
+        id: version-check
+        run: |
+          current_version=$(node -p "require('./package.json').version")
+          previous_version=$(git show HEAD~1:package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).version")
+
+          if [ "$current_version" != "$previous_version" ]; then
+            echo "version-changed=true" >> "$GITHUB_OUTPUT"
+            echo "Package version changed from $previous_version ton $current_version ✅" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "version-changed=false" >> "$GITHUB_OUTPUT"
+            echo "Not triggering deployment ❌" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  trigger_deploy:
+    name: Trigger Deployment
+    if: ${{ needs.check_version_change.outputs.version-changed == 'true' }}
+    needs: check_version_change
+    with:
+      branch: main
+    uses: ./.github/workflows/Deploy.yml
+    secrets: inherit

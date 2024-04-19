@@ -1,0 +1,31 @@
+image: node:lts
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - pre-build
+  - deploy
+
+pre-build:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - package.json
+  stage: pre-build
+  script:
+    - echo "Creating .env File"
+    - echo "$ENV" > .env
+    - echo ".env Created!"
+
+deploy:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - package.json
+  stage: deploy
+  script:
+    - echo "Deploying Firebase Function"
+    - npm install -g firebase-tools
+    - npm deploy --token $FB_TOKEN

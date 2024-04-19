@@ -1,0 +1,39 @@
+name: Firebase Deploy
+on:
+  workflow_call:
+    inputs:
+      branch:
+        type: string
+        description: branch name for deployment
+        default: main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{inputs.branch}}
+
+      - name: Create .env File
+        run: echo "${{ secrets.ENV_VARS }}" > .env
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Deploy Firebase Function
+        run: yarn deploy --token "${{ secrets.FIREBASE_TOKEN }}"
+
+      - name: Deployed to Firebase 🍾
+        run: echo "Deployed ${{inputs.branch}} branch to Firebase" >> $GITHUB_STEP_SUMMARY
