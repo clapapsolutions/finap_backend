@@ -1,11 +1,11 @@
 {
   "name": "finapp-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Finance App Server",
   "main": "dist/src/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "rimraf dist && tsc",
     "emulate": "yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
@@ -31,6 +31,7 @@
     "graphql": "^16.8.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.4.3",
+    "sinon": "^18.0.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "colors": "^1.4.0",
     "dotenv": "^16.3.1",
     "firebase-functions-test": "^3.1.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.1",
     "rimraf": "^5.0.1",
     "typescript": "^5.2.2"
