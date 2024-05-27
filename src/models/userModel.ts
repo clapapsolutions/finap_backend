@@ -13,6 +13,8 @@ interface IUser extends Document {
     category?: string[];
     currency?: string;
     token?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 

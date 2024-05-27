@@ -43,37 +43,47 @@ const getAllExpenseItemByUser = asyncHandler(async (req, res) => {
 
   const pipeline = [
     {
-      $match:
-        /**
-         * query: The query in MQL.
-         */
-        {
-          userEmail: userEmail,
+      $match: {
+        userEmail: userEmail
+      }
+    }, {
+      $project: {
+        convertedDate: {
+          $dateToString: {
+            format: '%Y-%m-%d',
+            date: '$userExpenseTimestamp'
+          }
         },
-    },
-    {
-      $group:
-        /**
-         * _id: The id of the group.
-         * fieldN: The first field name.
-         */
-        {
-          _id: "$userExpenseTimestamp",
-          expenses: {
-            $push: {
-              _id: "$_id",
-              userExpenseTimestamp: "$userExpenseTimestamp",
-              expenseName: "$expenseName",
-              expenseDesc: "$expenseDesc",
-              expenseAmount: "$expenseAmount",
-              expenseAccount: "$expenseAccount",
-              expenseCategory: "$expenseCategory",
-            },
-          },
-        },
-    },
+        userExpenseTimestamp: 1,
+        expenseName: 1,
+        expenseDesc: 1,
+        expenseAmount: 1,
+        expenseAccount: 1,
+        expenseCategory: 1
+      }
+    }, {
+      $group: {
+        _id: '$convertedDate',
+        expenses: {
+          $push: {
+            _id: '$_id',
+            userExpenseTimestamp: '$userExpenseTimestamp',
+            expenseName: '$expenseName',
+            expenseDesc: '$expenseDesc',
+            expenseAmount: '$expenseAmount',
+            expenseAccount: '$expenseAccount',
+            expenseCategory: '$expenseCategory'
+          }
+        }
+      }
+    }, {
+      $sort: {
+        _id: -1
+      }
+    }
   ]
 
+  // @ts-ignore
   const expensesBydate = await Expense.aggregate(pipeline)
 
   res.status(200).send(expensesBydate)
