@@ -6,6 +6,6 @@ import {registerUser, authUser, getUserProfile} from "../controllers/userControl
 
 router.route("/add_user").post(registerUser)
 router.route("/auth_user").post(authUser)
-router.route("/profile").get(getUserProfile)
+router.route("/profile").post(getUserProfile)
 
 export default router

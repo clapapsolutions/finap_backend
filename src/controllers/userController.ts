@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
 import User from "../models/userModel.js"
-import generateToken from '../utils/generateToken.js'
-import { Request, Response } from 'express';
+import generateToken from "../utils/generateToken.js"
+import { Request, Response } from "express"
 
 //@desc    Register a new user
 //@route   POST /api/users/add_new_user
@@ -34,11 +34,10 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 })
 
-
 //@desc    Auth user and get token
 //@route   GET /api/users/login
 //@access  Public
-const authUser = asyncHandler(async (req:Request, res:Response) => {
+const authUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body
 
   const user = await User.findOne({ email })
@@ -52,15 +51,15 @@ const authUser = asyncHandler(async (req:Request, res:Response) => {
     })
   } else {
     res.status(401)
-    throw new Error('Invalid Email or Password')
+    throw new Error("Invalid Email or Password")
   }
 })
 
 //@desc    Get user Profile
-//@route   GET /api/users/profile
+//@route   POST /api/users/profile
 //@access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const {userId} = req.body
+  const { userId } = req.body
   const user = await User.findById(userId)
 
   if (user) {
@@ -68,18 +67,16 @@ const getUserProfile = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin:user.isAdmin,
-      accounts:user.account,
-      expenseCategories:user.category,
-      currency:user.currency,
-      createdAt:user.createdAt
+      isAdmin: user.isAdmin,
+      accounts: user.account,
+      expenseCategories: user.category,
+      currency: user.currency,
+      createdAt: user.createdAt,
     })
   } else {
     res.status(404)
-    throw new Error('User not found')
+    throw new Error("User not found")
   }
 })
 
-
-
-export { registerUser, authUser,getUserProfile }
+export { registerUser, authUser, getUserProfile }
